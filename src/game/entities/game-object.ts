@@ -9,7 +9,8 @@ export class GameObject {
 
   constructor(position: Vector2) {
     this.position = position;
-    this.velocity = new Vector2(0, 3);
+    this.velocity = new Vector2(0, 2);
+    this.pointValue = 0;
   }
 
   update() {

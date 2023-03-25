@@ -22,7 +22,6 @@ export class Game {
       )
     );
     this.spawnCounter = 0;
-    this.spawnGameObject();
   }
 
   update() {
