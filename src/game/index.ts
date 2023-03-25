@@ -1,10 +1,14 @@
 import { SPAWN_COUNTER_THRESHOLD, SPRITE_SIZE_DIMENSION } from "./constants";
+import { Cone } from "./entities/cone";
 import { Cube } from "./entities/cube";
+import { Enemy } from "./entities/enemy";
 import { GameObject } from "./entities/game-object";
 import { Player } from "./entities/player";
 import { Vector2 } from "./math/vector2";
+import { randomIntFromInterval } from "./utils";
 
 export class Game {
+  paused: boolean;
   spawnCounter: number;
   viewport: HTMLCanvasElement
   charge: number;
@@ -21,12 +25,14 @@ export class Game {
         this.viewport.height / 2 - SPRITE_SIZE_DIMENSION
       )
     );
+    this.paused = false;
     this.spawnCounter = 0;
   }
 
   update() {
     // Handle game logic updates
     this.handleKeyEvents();
+    if (this.paused) return;
     this.player.update();
 
     this.spawnGameObject();
@@ -46,7 +52,12 @@ export class Game {
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, this.viewport.width, this.viewport.height);
 
-    ctx.fillStyle = 'blue';
+    if (this.paused) {
+      ctx.fillStyle = 'red';
+      ctx.fillText('PAUSED', 5, 45);
+    }
+
+    ctx.fillStyle = 'yellow';
     ctx.fillText(this.charge.toString(), this.viewport.width - 50, 50)
 
     this.player.draw(ctx);
@@ -57,6 +68,12 @@ export class Game {
   handleKeyEvents() {
     window.addEventListener('keydown', (event) => {
       switch(event.key) {
+        case 'Escape':
+          this.paused = true;
+          break;
+        case ' ':
+          this.paused = false;
+          break;
         case 'ArrowLeft':
           this.player.setVelocity(-5, this.player.getVelocity().getY());
           break;
@@ -78,14 +95,31 @@ export class Game {
     });
   }
 
+  getRandomGameObject(position: Vector2): GameObject {
+    const objectSelector: number = randomIntFromInterval(0, 2);
+    switch(objectSelector) {
+      case 0:
+        return new Cube(position);
+      case 1:
+        return new Cone(position);
+      case 2:
+        return new Enemy(position);
+      default:
+        return new Cube(position);
+    }
+  }
+
   spawnGameObject(): void {
     // If gameObjects has less than 2 game objects
     // add new game object
     this.spawnCounter += 1;
     if (this.gameObjects.length < 2 && this.spawnCounter > SPAWN_COUNTER_THRESHOLD) {
-      const xVal = Math.floor(Math.random() * this.viewport.width - SPRITE_SIZE_DIMENSION);
+      const xVal = randomIntFromInterval(
+        (this.viewport.width * 0.2) - SPRITE_SIZE_DIMENSION, 
+        (this.viewport.width * 0.8) - SPRITE_SIZE_DIMENSION
+      );
       this.gameObjects.push(
-        new Cube(new Vector2(xVal, 0))
+        this.getRandomGameObject(new Vector2(xVal, 0))
       );
       this.spawnCounter = 0;
     }
