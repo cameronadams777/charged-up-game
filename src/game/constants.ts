@@ -1,0 +1,3 @@
+export const SPRITE_SIZE_DIMENSION = 64;
+
+export const SPAWN_COUNTER_THRESHOLD = 50; 
