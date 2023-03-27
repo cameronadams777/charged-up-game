@@ -64,11 +64,6 @@ export class Game {
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, this.viewport.width, this.viewport.height);
 
-    if (this.paused) {
-      ctx.fillStyle = 'red';
-      ctx.fillText('PAUSED', 5, 45);
-    }
-
     ctx.fillStyle = 'white';
     const timerText = this.getFormattedGameTime();
     ctx.fillText(
