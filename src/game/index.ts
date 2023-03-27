@@ -33,7 +33,7 @@ export class Game {
     // Handle game logic updates
     this.handleKeyEvents();
     if (this.paused) return;
-    this.player.update();
+    this.player.update(this.viewport);
 
     this.spawnGameObject();
 

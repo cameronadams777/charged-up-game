@@ -10,9 +10,11 @@ export class Player {
     this.velocity = Vector2.Zero();
   }
 
-  update() {
-    this.position.setX(this.position.getX() + this.velocity.getX()); 
-    this.position.setY(this.position.getY() + this.velocity.getY()); 
+  update(viewport: HTMLCanvasElement) {
+    if ((this.getLeft() > 0 || this.velocity.getX() > 0) &&
+        (this.getRight() < viewport.width || this.velocity.getX() < 0)) {
+      this.position.setX(this.position.getX() + this.velocity.getX()); 
+    }
   }
 
   draw(ctx: CanvasRenderingContext2D) {
