@@ -4,7 +4,7 @@ import { Game } from "../game";
 export const GamePage: FunctionComponent = () => {
   useEffect(() => {
     const canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
-   
+     
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -18,7 +18,7 @@ export const GamePage: FunctionComponent = () => {
 
       // Customize canvas context 
       ctx.font = '40px Verdana';
-      
+
       const game = new Game(canvas);
 
       const gameLoop = () => {

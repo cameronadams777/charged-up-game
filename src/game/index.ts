@@ -66,6 +66,22 @@ export class Game {
   }
 
   handleKeyEvents() {
+    // Phone
+    window.addEventListener('touchstart', (event) => {
+      const touch = event.touches[0] || event.changedTouches[0];
+      const touchXPos: number = touch.pageX;
+      if(touchXPos < window.innerWidth / 2) {
+        this.player.setVelocity(-5, this.player.getVelocity().getY());
+      } else {
+        this.player.setVelocity(5, this.player.getVelocity().getY());
+      }
+    });
+
+    window.addEventListener('touchend', (event) => {
+      this.player.setVelocity(0, 0); 
+    });
+
+    // Computer
     window.addEventListener('keydown', (event) => {
       switch(event.key) {
         case 'Escape':
