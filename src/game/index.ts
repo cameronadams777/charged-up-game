@@ -1,3 +1,4 @@
+import * as luxon from 'luxon';
 import { SPAWN_COUNTER_THRESHOLD, SPRITE_SIZE_DIMENSION } from "./constants";
 import { Cone } from "./entities/cone";
 import { Cube } from "./entities/cube";
@@ -8,10 +9,11 @@ import { Vector2 } from "./math/vector2";
 import { randomIntFromInterval } from "./utils";
 
 export class Game {
-  paused: boolean;
   spawnCounter: number;
   viewport: HTMLCanvasElement
   charge: number;
+  endTime: Date;
+  gameTimer: number;
   player: Player;
   gameObjects: GameObject[] = [];
 
@@ -21,18 +23,28 @@ export class Game {
     this.charge = 0;
     this.player = new Player(
       new Vector2(
-        this.viewport.width / 2 - SPRITE_SIZE_DIMENSION, 
-        this.viewport.height / 2 - SPRITE_SIZE_DIMENSION
+        this.viewport.width / 2 - SPRITE_SIZE_DIMENSION / 2, 
+        this.viewport.height / 2 - SPRITE_SIZE_DIMENSION / 2
       )
     );
-    this.paused = false;
     this.spawnCounter = 0;
+    this.gameTimer = 0;
+    this.endTime = luxon.DateTime.fromJSDate(new Date()).plus({ minutes: 2 }).toJSDate();
   }
 
   update() {
     // Handle game logic updates
     this.handleKeyEvents();
-    if (this.paused) return;
+
+    const now = new Date();
+    this.gameTimer = this.endTime.getTime() - now.getTime();
+
+    if (this.gameTimer <= 500) {
+      // TODO: Post score to leaderboard
+      window.location.href = '/leaderboard';
+      return;
+    }
+    
     this.player.update(this.viewport);
 
     this.spawnGameObject();
@@ -57,8 +69,16 @@ export class Game {
       ctx.fillText('PAUSED', 5, 45);
     }
 
+    ctx.fillStyle = 'white';
+    const timerText = this.getFormattedGameTime();
+    ctx.fillText(
+      timerText, 
+      (this.viewport.width / 2) - ctx.measureText(timerText).width / 2,
+      45
+    );
+
     ctx.fillStyle = 'yellow';
-    ctx.fillText(this.charge.toString(), this.viewport.width - 50, 50)
+    ctx.fillText(this.charge.toString(), this.viewport.width - 75, 50);
 
     this.player.draw(ctx);
 
@@ -84,12 +104,6 @@ export class Game {
     // Computer
     window.addEventListener('keydown', (event) => {
       switch(event.key) {
-        case 'Escape':
-          this.paused = true;
-          break;
-        case ' ':
-          this.paused = false;
-          break;
         case 'ArrowLeft':
           this.player.setVelocity(-5, this.player.getVelocity().getY());
           break;
@@ -139,5 +153,11 @@ export class Game {
       );
       this.spawnCounter = 0;
     }
+  }
+
+  getFormattedGameTime(): string {
+    const minutes = Math.floor((this.gameTimer % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((this.gameTimer % (1000 * 60)) / 1000);
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 }
