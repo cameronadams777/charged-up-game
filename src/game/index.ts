@@ -1,5 +1,5 @@
 import * as luxon from 'luxon';
-import { SPRITE_SIZE_DIMENSION } from "./constants";
+import { PLAYER_START_POSITION, SPRITE_SIZE_DIMENSION } from "./constants";
 import { Cone } from "./entities/cone";
 import { Cube } from "./entities/cube";
 import { Enemy } from "./entities/enemy";
@@ -8,6 +8,7 @@ import { Player } from "./entities/player";
 import { Vector2 } from "./math/vector2";
 import { randomIntFromInterval } from "./utils";
 import heartImageSrc from '../assets/heart.png';
+import { ChargingStation } from './entities/charging-station';
 
 const heartImage = new Image();
 heartImage.src = heartImageSrc;
@@ -24,16 +25,14 @@ export class Game {
   enemies: Enemy[] = [];
   enemyLastSpawnTime: number;
   enemySpawnTimer: Date;
+  chargingStationSpawnCounter: number;
 
   constructor(viewport: HTMLCanvasElement) {
     // Handle game initializations
     this.viewport = viewport;
     this.charge = 0;
     this.player = new Player(
-      new Vector2(
-        this.viewport.width / 2 - SPRITE_SIZE_DIMENSION / 2, 
-        this.viewport.height / 2 - SPRITE_SIZE_DIMENSION / 2
-      )
+      PLAYER_START_POSITION(viewport)
     );
     this.gameTimer = 0;
     this.endTime = luxon.DateTime.fromJSDate(new Date()).plus({ minutes: 2 }).toJSDate();
@@ -41,6 +40,7 @@ export class Game {
     this.enemySpawnTimer = new Date();
     this.gameObjectLastSpawnTime = 0;
     this.gameObjectSpawnTimer = new Date();
+    this.chargingStationSpawnCounter = 0;
   }
 
   update() {
@@ -50,11 +50,11 @@ export class Game {
     const now = new Date();
     this.gameTimer = this.endTime.getTime() - now.getTime();
 
-    if (this.player.getLives() <= 0 || this.gameTimer <= 500) {
+    /*if (this.gameTimer <= 500) {
       // TODO: Post score to leaderboard
       window.location.href = '/leaderboard';
       return;
-    }
+    }*/
     
     this.player.update(this.viewport);
 
@@ -72,8 +72,9 @@ export class Game {
 
     this.enemies.forEach((enemy, index) => {
       if (enemy.isColliding(this.player)) {
-        this.player.setLives(this.player.getLives() - 1);
         this.enemies.splice(index, 1);
+        this.player.setPosition(PLAYER_START_POSITION(this.viewport));
+        this.player.setLives(this.player.getLives() - 1);
       }
       else if (enemy.getPosition().getY() > this.viewport.height + 50) this.enemies.splice(index, 1);
       else enemy.update(this.player);
@@ -84,18 +85,7 @@ export class Game {
     // Give canvas a background
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, this.viewport.width, this.viewport.height);
-
-    ctx.fillStyle = 'white';
-    const timerText = this.getFormattedGameTime();
-    ctx.fillText(
-      timerText, 
-      (this.viewport.width / 2) - ctx.measureText(timerText).width / 2,
-      45
-    );
-   
-    ctx.fillStyle = 'yellow';
-    ctx.fillText(this.charge.toString(), this.viewport.width - 75, 50);
-
+ 
     this.player.draw(ctx);
 
     this.gameObjects.forEach(gameObject => gameObject.draw(ctx));
@@ -104,6 +94,36 @@ export class Game {
     for (let i = 1; i < this.player.getLives() + 1; i++) {
       ctx.drawImage(heartImage, 40 * i, 5, SPRITE_SIZE_DIMENSION, SPRITE_SIZE_DIMENSION)
     }
+
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.moveTo((this.viewport.width / 2) - 250, 0);
+    ctx.lineTo((this.viewport.width / 2) - 75, 0);
+    ctx.lineTo((this.viewport.width / 2) - 75, 75);
+    ctx.lineTo((this.viewport.width / 2) - 162.5, 75);
+    ctx.fill(); 
+
+    ctx.fillStyle = 'blue';
+    ctx.beginPath();
+    ctx.moveTo((this.viewport.width / 2) + 250, 0);
+    ctx.lineTo((this.viewport.width / 2) + 75, 0);
+    ctx.lineTo((this.viewport.width / 2) + 75, 75);
+    ctx.lineTo((this.viewport.width / 2) + 162.5, 75);
+    ctx.fill(); 
+
+    ctx.fillStyle = 'white';
+    ctx.fillText(this.charge.toString(), (this.viewport.width / 2) - 150, 48);
+
+    ctx.fillStyle = 'white';
+    ctx.fillRect((this.viewport.width / 2) - 75, 0, 150, 75);
+
+    ctx.fillStyle = 'black';
+    const timerText = this.getFormattedGameTime();
+    ctx.fillText(
+      timerText, 
+      (this.viewport.width / 2) - ctx.measureText(timerText).width / 2,
+      50
+    );
   }
 
   handleKeyEvents() {
@@ -112,24 +132,24 @@ export class Game {
       const touch = event.touches[0] || event.changedTouches[0];
       const touchXPos: number = touch.pageX;
       if(touchXPos < window.innerWidth / 2) {
-        this.player.setVelocity(-5, this.player.getVelocity().getY());
+        this.player.setVelocity(new Vector2(-5, this.player.getVelocity().getY()));
       } else {
-        this.player.setVelocity(5, this.player.getVelocity().getY());
+        this.player.setVelocity(new Vector2(5, this.player.getVelocity().getY()));
       }
     });
 
-    window.addEventListener('touchend', (event) => {
-      this.player.setVelocity(0, 0); 
+    window.addEventListener('touchend', () => {
+      this.player.setVelocity(new Vector2(0, 0)); 
     });
 
     // Computer
     window.addEventListener('keydown', (event) => {
       switch(event.key) {
         case 'ArrowLeft':
-          this.player.setVelocity(-5, this.player.getVelocity().getY());
+          this.player.setVelocity(new Vector2(-5, this.player.getVelocity().getY()));
           break;
         case 'ArrowRight':
-          this.player.setVelocity(5, this.player.getVelocity().getY());
+          this.player.setVelocity(new Vector2(5, this.player.getVelocity().getY()));
           break;
       }
     });
@@ -137,22 +157,33 @@ export class Game {
     window.addEventListener('keyup', (event) => {
       switch(event.key) {
         case 'ArrowLeft':
-          this.player.setVelocity(0, this.player.getVelocity().getY());
+          this.player.setVelocity(new Vector2(0, this.player.getVelocity().getY()));
           break;
         case 'ArrowRight':
-          this.player.setVelocity(0, this.player.getVelocity().getY());
+          this.player.setVelocity(new Vector2(0, this.player.getVelocity().getY()));
           break;
       }
     });
   }
 
   getRandomGameObject(position: Vector2): GameObject {
-    const objectSelector: number = randomIntFromInterval(0, 1);
+    const objectSelector: number = randomIntFromInterval(
+      0, 
+      this.gameTimer < 30000 && this.chargingStationSpawnCounter < 2 
+        ? 2 
+        : 1
+    );
     switch(objectSelector) {
       case 0:
         return new Cube(position);
       case 1:
         return new Cone(position);
+      case 2:
+        const possibleXValues = [this.viewport.width * 0.25, (this.viewport.width * 0.75) - (SPRITE_SIZE_DIMENSION * 4)]
+        const randomPos = randomIntFromInterval(0, possibleXValues.length - 1);
+        const xVal = possibleXValues[randomPos];
+        this.chargingStationSpawnCounter += 1;
+        return new ChargingStation(new Vector2(xVal, 0));
       default:
         return new Cube(position);
     }
@@ -184,7 +215,7 @@ export class Game {
       this.enemies.push(
         new Enemy(new Vector2(xVal, 0))
       );
-      this.enemySpawnTimer = luxon.DateTime.fromJSDate(new Date()).plus({ seconds: 5 }).toJSDate();
+      this.enemySpawnTimer = luxon.DateTime.fromJSDate(new Date()).plus({ seconds: 2 }).toJSDate();
     }
   }
 
