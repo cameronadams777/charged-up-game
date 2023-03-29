@@ -4,10 +4,12 @@ import { Vector2 } from "../math/vector2";
 export class Player {
   position: Vector2;
   velocity: Vector2;
+  lives: number;
 
   constructor(position: Vector2) {
     this.position = position;
     this.velocity = Vector2.Zero();
+    this.lives = 3;
   }
 
   update(viewport: HTMLCanvasElement) {
@@ -25,6 +27,14 @@ export class Player {
       SPRITE_SIZE_DIMENSION, 
       SPRITE_SIZE_DIMENSION
     );
+  }
+
+  getLives(): number {
+    return this.lives;
+  }
+  
+  setLives(lives: number): void {
+    this.lives = lives;
   }
 
   getPosition(): Vector2 {
