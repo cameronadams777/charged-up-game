@@ -4,6 +4,28 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+
+  &__title-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    font-size: 3rem;
+  }
+
+  &__charged-up-logo {
+    width: 25%;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+  }
 
   &__play-button {
     padding: 4px;

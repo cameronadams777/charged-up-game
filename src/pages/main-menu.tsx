@@ -1,7 +1,8 @@
 import { FunctionComponent, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Backdrop } from "../game/backdrop";
-import './main-menu.scss';
+import Logo from "../assets/logo.png";
+import "./main-menu.scss";
 
 export const MainMenuPage: FunctionComponent = () => {
 
@@ -36,6 +37,10 @@ export const MainMenuPage: FunctionComponent = () => {
   return (
     <>
       <div className="main-page">
+        <div className="main-page__title-group">
+          <img src={Logo} className="main-page__charged-up-logo" />
+          <h2 className="main-page__title">Blargle Charge</h2>
+        </div>
         <Link 
           to="/game" 
           className="main-page__play-button"
