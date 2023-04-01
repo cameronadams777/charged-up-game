@@ -1,0 +1,62 @@
+ #game-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.leaderboard-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1;
+
+  &__menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  &__menu-title {
+    padding: 0;
+    margin: 0;
+    margin-bottom: 1rem;
+  }
+
+  &__menu-item {
+    &:nth-of-type(odd) {
+      color: #ED1C24;
+    }
+
+    &:nth-of-type(even) {
+      color: #0066B3;
+    }
+  }
+
+  &__play-again-button {
+    border: none;
+    padding: 1rem;
+    padding: 0.5rem;
+    background-color: #0066B3;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      background-color: purple;
+    }
+  }
+}

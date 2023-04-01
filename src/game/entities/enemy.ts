@@ -8,17 +8,19 @@ export class Enemy extends BaseEntity {
     this.velocity = new Vector2(0, 3);
   }
 
-  update(player: Player): void {
-    if (this.position.getY() <= player.getBottom()) {
-      if (player.getPosition().getX() > this.position.getX()) {
-        this.velocity.setX(2);
-      } else if (player.getPosition().getX() < this.position.getX()) {
-        this.velocity.setX(-2);
+  update(player?: Player): void {
+    if(player != null) {
+      if (this.position.getY() <= player.getBottom()) {
+        if (player.getPosition().getX() > this.position.getX()) {
+          this.velocity.setX(2);
+        } else if (player.getPosition().getX() < this.position.getX()) {
+          this.velocity.setX(-2);
+        } else {
+          this.velocity.setX(0);
+        }
       } else {
         this.velocity.setX(0);
       }
-    } else {
-      this.velocity.setX(0);
     }
     this.position.setX(this.position.getX() + this.velocity.getX());
     this.position.setY(this.position.getY() + this.velocity.getY());

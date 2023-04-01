@@ -1,13 +1,17 @@
 import { SPRITE_SIZE_DIMENSION } from "../constants";
 import { Vector2 } from "../math/vector2";
 
+export type EntityType = "enemy" | "gameObject" | "base";
+
 export class BaseEntity {
+  type: EntityType;
   position: Vector2;
   velocity: Vector2;
   width: number;
   height: number;
 
   constructor(position: Vector2) {
+    this.type = "base";
     this.position = position;
     this.width = SPRITE_SIZE_DIMENSION;
     this.height = SPRITE_SIZE_DIMENSION;
@@ -32,6 +36,10 @@ export class BaseEntity {
         entity.getTop() <= this.getBottom()
       )
     );
+  }
+
+  getType(): EntityType {
+    return this.type;
   }
 
   getPosition(): Vector2 {

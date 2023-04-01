@@ -3,12 +3,11 @@ import { Game } from "../game";
 
 export const GamePage: FunctionComponent = () => {
   useEffect(() => {
-    const canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
-     
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
+    const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
     if (canvas != null) {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
       const ctx = canvas.getContext("2d");
 
       if (ctx == null) {

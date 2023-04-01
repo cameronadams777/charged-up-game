@@ -50,11 +50,11 @@ export class Game {
     const now = new Date();
     this.gameTimer = this.endTime.getTime() - now.getTime();
 
-    /*if (this.gameTimer <= 500) {
+    if (this.player.getLives() <= 0 && this.gameTimer <= 500) {
       // TODO: Post score to leaderboard
       window.location.href = '/leaderboard';
       return;
-    }*/
+    }
     
     this.player.update(this.viewport);
 
