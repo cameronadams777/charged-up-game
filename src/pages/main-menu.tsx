@@ -1,10 +1,14 @@
-import { FunctionComponent, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { FunctionComponent, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Backdrop } from "../game/backdrop";
+import { TeamNumberModal } from "../components/team-number-modal";
 import Logo from "../assets/logo.png";
 import "./main-menu.scss";
 
 export const MainMenuPage: FunctionComponent = () => {
+  const [isTeamModalOpen, setIsTeamModal] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
@@ -34,19 +38,33 @@ export const MainMenuPage: FunctionComponent = () => {
     loop();
   }, []);
 
+  const checkTeamAndContinue = () => {
+    const teamNumber = localStorage.getItem("team_number");
+    if (!teamNumber) {
+      setIsTeamModal(true);
+      return; 
+    }
+    navigate("/game");
+  }
+
   return (
     <>
+      <TeamNumberModal 
+        isOpen={isTeamModalOpen} 
+        close={() => setIsTeamModal(false)}
+        onComplete={() => navigate("/game")}
+      />
       <div className="main-page">
         <div className="main-page__title-group">
           <img src={Logo} className="main-page__charged-up-logo" />
           <h2 className="main-page__title">Blargle Charge</h2>
         </div>
-        <Link 
-          to="/game" 
+        <button 
           className="main-page__play-button"
+          onClick={checkTeamAndContinue}
         >
           Play
-        </Link>
+        </button>
       </div> 
       <canvas id="game-canvas"></canvas>
     </>

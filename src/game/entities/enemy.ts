@@ -27,7 +27,12 @@ export class Enemy extends BaseEntity {
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = 'red';
-    super.draw(ctx);
+    ctx.strokeStyle = 'red';
+    ctx.strokeRect(
+      this.position.getX(), 
+      this.position.getY(), 
+      this.width, 
+      this.height 
+    );
   }
 }

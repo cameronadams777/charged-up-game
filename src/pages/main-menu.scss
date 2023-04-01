@@ -30,13 +30,15 @@
   &__play-button {
     padding: 4px;
     width: 25%;
-    background-color: blue;
+    background-color: #0066B3;
     color: white;
     border-radius: 5px;
     text-align: center;
     font-size: 2rem;
     font-weight: 700;
     text-decoration: none;
+    border: none;
+    cursor: pointer;
 
     &:hover {
       background-color: purple; 
