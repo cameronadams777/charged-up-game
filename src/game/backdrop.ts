@@ -1,5 +1,4 @@
 import { SPRITE_SIZE_DIMENSION } from "./constants";
-import { ChargingStation } from "./entities/charging-station";
 import { Cone } from "./entities/cone";
 import { Cube } from "./entities/cube";
 import { Enemy } from "./entities/enemy";
@@ -17,19 +16,19 @@ export class Backdrop {
     this.gameObjects = [];
     this.enemies = [];
     
-    this.spawnGameObject();
-    this.spawnEnemy();
+    this.spawnGameObjects();
+    this.spawnEnemies();
   }
 
-  update(): void {
+  update(delta: number): void {
     this.gameObjects.forEach((gameObject, index) => {
       if (gameObject.getPosition().getY() > this.viewport.height + 50) this.gameObjects.splice(index, 1);
-      else gameObject.update();
+      else gameObject.update(delta);
     });
 
     this.enemies.forEach((enemy, index) => {
       if (enemy.getPosition().getY() > this.viewport.height + 50) this.enemies.splice(index, 1);
-      else enemy.update();
+      else enemy.update(delta);
     });
   }
 
@@ -57,7 +56,7 @@ export class Backdrop {
   }
 
 
-  spawnGameObject(): void {
+  spawnGameObjects(): void {
     setInterval(() => {
       const xVal = randomIntFromInterval(
         (this.viewport.width * 0.2) - SPRITE_SIZE_DIMENSION, 
@@ -69,7 +68,7 @@ export class Backdrop {
     }, 1500);
   }
 
-  spawnEnemy(): void {
+  spawnEnemies(): void {
     setInterval(() => {
        const xVal = randomIntFromInterval(
         (this.viewport.width * 0.2) - SPRITE_SIZE_DIMENSION, 

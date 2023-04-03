@@ -7,12 +7,12 @@ export class GameObject extends BaseEntity {
   constructor(position: Vector2) {
     super(position);
     this.type = "gameObject";
-    this.velocity = new Vector2(0, 2);
+    this.velocity = new Vector2(0, 50);
     this.pointValue = 0;
   }
 
-  update(): void {
-    this.position.setY(this.position.getY() + this.velocity.getY());
+  update(delta: number): void {
+    this.position.setY(this.position.getY() + (this.velocity.getY() * delta));
   }
 
   draw(ctx: CanvasRenderingContext2D): void {

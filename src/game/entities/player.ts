@@ -9,10 +9,10 @@ export class Player extends BaseEntity {
     this.lives = 3;
   }
 
-  update(viewport: HTMLCanvasElement): void {
+  update(viewport: HTMLCanvasElement, delta: number): void {
     if ((this.getLeft() > 0 || this.velocity.getX() > 0) &&
         (this.getRight() < viewport.width || this.velocity.getX() < 0)) {
-      this.position.setX(this.position.getX() + this.velocity.getX()); 
+      this.position.setX(this.position.getX() + (this.velocity.getX() * delta)); 
     }
   }
 

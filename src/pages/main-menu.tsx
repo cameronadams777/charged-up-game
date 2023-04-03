@@ -26,12 +26,17 @@ export const MainMenuPage: FunctionComponent = () => {
       return;
     }
 
+    let secondsPassed = 0;
+    let oldTimestamp = 0;
     const backdrop = new Backdrop(canvas);
 
-    const loop = () => {
+    const loop = (animationFrame: number = 0) => {
       window.requestAnimationFrame(loop);
+      
+      secondsPassed = (animationFrame - oldTimestamp) / 1000;
+      oldTimestamp = animationFrame;
 
-      backdrop.update();
+      backdrop.update(secondsPassed);
       backdrop.draw(ctx);
     }
 

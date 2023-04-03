@@ -21,14 +21,19 @@ export const LeaderboardPage: FunctionComponent = () => {
       return;
     }
     
+    let secondsPassed = 0;
+    let oldTimestamp = 0;
     const backdrop = new Backdrop(canvas);
 
-    const loop = () => {
+    const loop = (animationFrame: number = 0) => {
       window.requestAnimationFrame(loop);
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      backdrop.update();
+      secondsPassed = (animationFrame - oldTimestamp) / 1000;
+      oldTimestamp = animationFrame;
+
+      backdrop.update(secondsPassed);
       backdrop.draw(ctx);
     }
 

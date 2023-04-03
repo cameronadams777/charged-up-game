@@ -5,16 +5,16 @@ import { Player } from "./player";
 export class Enemy extends BaseEntity {
   constructor(position: Vector2) {
     super(position);
-    this.velocity = new Vector2(0, 3);
+    this.velocity = new Vector2(0, 60);
   }
 
-  update(player?: Player): void {
+  update(delta: number, player?: Player): void {
     if(player != null) {
       if (this.position.getY() <= player.getBottom()) {
         if (player.getPosition().getX() > this.position.getX()) {
-          this.velocity.setX(2);
+          this.velocity.setX(60);
         } else if (player.getPosition().getX() < this.position.getX()) {
-          this.velocity.setX(-2);
+          this.velocity.setX(-60);
         } else {
           this.velocity.setX(0);
         }
@@ -22,8 +22,8 @@ export class Enemy extends BaseEntity {
         this.velocity.setX(0);
       }
     }
-    this.position.setX(this.position.getX() + this.velocity.getX());
-    this.position.setY(this.position.getY() + this.velocity.getY());
+    this.position.setX(this.position.getX() + (this.velocity.getX() * delta));
+    this.position.setY(this.position.getY() + (this.velocity.getY() * delta));
   }
 
   draw(ctx: CanvasRenderingContext2D): void {

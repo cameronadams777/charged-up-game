@@ -19,47 +19,33 @@ export class Game {
   endTime: Date;
   gameTimer: number;
   player: Player;
-  gameObjectLastSpawnTime: number;
-  gameObjectSpawnTimer: Date;
   gameObjects: GameObject[] = [];
   enemies: Enemy[] = [];
-  enemyLastSpawnTime: number;
-  enemySpawnTimer: Date;
   chargingStationSpawnCounter: number;
 
   constructor(viewport: HTMLCanvasElement) {
-    // Handle game initializations
     this.viewport = viewport;
+    this.player = new Player(PLAYER_START_POSITION(viewport));
     this.charge = 0;
-    this.player = new Player(
-      PLAYER_START_POSITION(viewport)
-    );
+    this.chargingStationSpawnCounter = 0;
     this.gameTimer = 0;
     this.endTime = luxon.DateTime.fromJSDate(new Date()).plus({ minutes: 2 }).toJSDate();
-    this.enemyLastSpawnTime = 0;
-    this.enemySpawnTimer = new Date();
-    this.gameObjectLastSpawnTime = 0;
-    this.gameObjectSpawnTimer = new Date();
-    this.chargingStationSpawnCounter = 0;
+
+    this.spawnGameObjects();
+    this.spawnEnemies();
   }
 
-  update() {
-    // Handle game logic updates
-    this.handleKeyEvents();
-
+  update(delta: number): void {
     const now = new Date();
     this.gameTimer = this.endTime.getTime() - now.getTime();
 
-    if (this.player.getLives() <= 0 && this.gameTimer <= 500) {
-      // TODO: Post score to leaderboard
-      window.location.href = '/leaderboard';
-      return;
+    if (this.gameTimer <= 500) {
+      return; 
     }
-    
-    this.player.update(this.viewport);
 
-    this.spawnGameObject();
-    this.spawnEnemy();
+    this.handleKeyEvents();
+    
+    this.player.update(this.viewport, delta);
 
     this.gameObjects.forEach((gameObject, index) => {
       if (gameObject.isColliding(this.player)) {
@@ -67,7 +53,7 @@ export class Game {
         this.gameObjects.splice(index, 1);
       }
       else if (gameObject.getPosition().getY() > this.viewport.height + 50) this.gameObjects.splice(index, 1);
-      else gameObject.update();
+      else gameObject.update(delta);
     });
 
     this.enemies.forEach((enemy, index) => {
@@ -77,11 +63,11 @@ export class Game {
         this.player.setLives(this.player.getLives() - 1);
       }
       else if (enemy.getPosition().getY() > this.viewport.height + 50) this.enemies.splice(index, 1);
-      else enemy.update(this.player);
+      else enemy.update(delta, this.player);
     });
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D): void {
     // Give canvas a background
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, this.viewport.width, this.viewport.height);
@@ -126,15 +112,15 @@ export class Game {
     );
   }
 
-  handleKeyEvents() {
+  handleKeyEvents(): void {
     // Phone
     window.addEventListener('touchstart', (event) => {
       const touch = event.touches[0] || event.changedTouches[0];
       const touchXPos: number = touch.pageX;
       if(touchXPos < window.innerWidth / 2) {
-        this.player.setVelocity(new Vector2(-5, this.player.getVelocity().getY()));
+        this.player.setVelocity(new Vector2(-50, this.player.getVelocity().getY()));
       } else {
-        this.player.setVelocity(new Vector2(5, this.player.getVelocity().getY()));
+        this.player.setVelocity(new Vector2(50, this.player.getVelocity().getY()));
       }
     });
 
@@ -146,10 +132,10 @@ export class Game {
     window.addEventListener('keydown', (event) => {
       switch(event.key) {
         case 'ArrowLeft':
-          this.player.setVelocity(new Vector2(-5, this.player.getVelocity().getY()));
+          this.player.setVelocity(new Vector2(-75, this.player.getVelocity().getY()));
           break;
         case 'ArrowRight':
-          this.player.setVelocity(new Vector2(5, this.player.getVelocity().getY()));
+          this.player.setVelocity(new Vector2(75, this.player.getVelocity().getY()));
           break;
       }
     });
@@ -189,10 +175,8 @@ export class Game {
     }
   }
 
-  spawnGameObject(): void {
-    const now = new Date();
-    this.gameObjectLastSpawnTime = this.gameObjectSpawnTimer.getTime() - now.getTime();
-    if (this.gameObjectLastSpawnTime < 500) {
+  spawnGameObjects(): void {
+    setInterval(() => {
       const xVal = randomIntFromInterval(
         (this.viewport.width * 0.2) - SPRITE_SIZE_DIMENSION, 
         (this.viewport.width * 0.8) - SPRITE_SIZE_DIMENSION
@@ -200,23 +184,19 @@ export class Game {
       this.gameObjects.push(
         this.getRandomGameObject(new Vector2(xVal, 0))
       );
-      this.gameObjectSpawnTimer = luxon.DateTime.fromJSDate(new Date()).plus({ seconds: 2 }).toJSDate();
-    }
+    }, 1500);
   }
 
-  spawnEnemy(): void {
-    const now = new Date();
-    this.enemyLastSpawnTime = this.enemySpawnTimer.getTime() - now.getTime();
-    if (this.enemyLastSpawnTime < 500) {
-       const xVal = randomIntFromInterval(
+  spawnEnemies(): void {
+    setInterval(() => {
+      const xVal = randomIntFromInterval(
         (this.viewport.width * 0.2) - SPRITE_SIZE_DIMENSION, 
         (this.viewport.width * 0.8) - SPRITE_SIZE_DIMENSION
       );
       this.enemies.push(
         new Enemy(new Vector2(xVal, 0))
       );
-      this.enemySpawnTimer = luxon.DateTime.fromJSDate(new Date()).plus({ seconds: 2 }).toJSDate();
-    }
+    }, 3000);
   }
 
   getFormattedGameTime(): string {
