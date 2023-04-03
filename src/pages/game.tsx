@@ -3,6 +3,8 @@ import { Game } from "../game";
 
 export const GamePage: FunctionComponent = () => {
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const debug = params.get("debug") ?? false;
     const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
     if (canvas != null) {
       canvas.width = window.innerWidth;

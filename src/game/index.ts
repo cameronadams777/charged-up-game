@@ -39,7 +39,7 @@ export class Game {
     const now = new Date();
     this.gameTimer = this.endTime.getTime() - now.getTime();
 
-    if (this.gameTimer <= 500) {
+    if (this.player.getLives() <= 0 || this.gameTimer <= 500) {
       return; 
     }
 
@@ -77,39 +77,51 @@ export class Game {
     this.gameObjects.forEach(gameObject => gameObject.draw(ctx));
     this.enemies.forEach(enemy => enemy.draw(ctx));
 
-    for (let i = 1; i < this.player.getLives() + 1; i++) {
-      ctx.drawImage(heartImage, 40 * i, 5, SPRITE_SIZE_DIMENSION, SPRITE_SIZE_DIMENSION)
-    }
-
     ctx.fillStyle = 'red';
     ctx.beginPath();
     ctx.moveTo((this.viewport.width / 2) - 250, 0);
     ctx.lineTo((this.viewport.width / 2) - 75, 0);
-    ctx.lineTo((this.viewport.width / 2) - 75, 75);
-    ctx.lineTo((this.viewport.width / 2) - 162.5, 75);
+    ctx.lineTo((this.viewport.width / 2) - 75, this.viewport.height / 8);
+    ctx.lineTo((this.viewport.width / 2) - 162.5, this.viewport.height / 8);
     ctx.fill(); 
 
     ctx.fillStyle = 'blue';
     ctx.beginPath();
     ctx.moveTo((this.viewport.width / 2) + 250, 0);
     ctx.lineTo((this.viewport.width / 2) + 75, 0);
-    ctx.lineTo((this.viewport.width / 2) + 75, 75);
-    ctx.lineTo((this.viewport.width / 2) + 162.5, 75);
+    ctx.lineTo((this.viewport.width / 2) + 75, this.viewport.height / 8);
+    ctx.lineTo((this.viewport.width / 2) + 162.5, this.viewport.height / 8);
     ctx.fill(); 
 
     ctx.fillStyle = 'white';
-    ctx.fillText(this.charge.toString(), (this.viewport.width / 2) - 150, 48);
+    const chargeMeasurements = ctx.measureText(this.charge.toString());
+    ctx.fillText(
+      this.charge.toString(), 
+      (this.viewport.width / 2) - 150, 
+      this.viewport.height / 8 - ((chargeMeasurements.actualBoundingBoxAscent + chargeMeasurements.actualBoundingBoxDescent) / 2)
+    );
 
     ctx.fillStyle = 'white';
-    ctx.fillRect((this.viewport.width / 2) - 75, 0, 150, 75);
+    ctx.fillRect((this.viewport.width / 2) - 75, 0, 150, this.viewport.height / 8);
 
     ctx.fillStyle = 'black';
     const timerText = this.getFormattedGameTime();
+    const textMeasurements = ctx.measureText(timerText); 
     ctx.fillText(
       timerText, 
-      (this.viewport.width / 2) - ctx.measureText(timerText).width / 2,
-      50
+      (this.viewport.width / 2) - textMeasurements.width / 2,
+      this.viewport.height / 8 - ((textMeasurements.actualBoundingBoxAscent + textMeasurements.actualBoundingBoxDescent) / 2)
     );
+
+    for (let i = 1; i < this.player.getLives() + 1; i++) {
+      ctx.drawImage(
+        heartImage, 
+        ((this.viewport.width / 2) + 55) + heartImage.width / 8.5 * i, 
+        (this.viewport.height / 8) - heartImage.height / 8, 
+        SPRITE_SIZE_DIMENSION, 
+        SPRITE_SIZE_DIMENSION
+      )
+    }
   }
 
   handleKeyEvents(): void {

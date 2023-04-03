@@ -12,9 +12,9 @@ export class Enemy extends BaseEntity {
     if(player != null) {
       if (this.position.getY() <= player.getBottom()) {
         if (player.getPosition().getX() > this.position.getX()) {
-          this.velocity.setX(60);
+          this.velocity.setX(45);
         } else if (player.getPosition().getX() < this.position.getX()) {
-          this.velocity.setX(-60);
+          this.velocity.setX(-45);
         } else {
           this.velocity.setX(0);
         }
