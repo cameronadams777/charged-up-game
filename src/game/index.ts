@@ -130,9 +130,9 @@ export class Game {
       const touch = event.touches[0] || event.changedTouches[0];
       const touchXPos: number = touch.pageX;
       if(touchXPos < window.innerWidth / 2) {
-        this.player.setVelocity(new Vector2(-50, this.player.getVelocity().getY()));
+        this.player.setVelocity(new Vector2(-75, this.player.getVelocity().getY()));
       } else {
-        this.player.setVelocity(new Vector2(50, this.player.getVelocity().getY()));
+        this.player.setVelocity(new Vector2(75, this.player.getVelocity().getY()));
       }
     });
 
