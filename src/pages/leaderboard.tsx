@@ -1,9 +1,11 @@
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Backdrop } from "../game/backdrop";
+import { client } from "../lib/supabase";
 import "./leaderboard.scss";
 
 export const LeaderboardPage: FunctionComponent = () => {
+  const [leaderboardData, setLeaderboardData] = useState<any>([]);
 
   useEffect(() => {
     const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
@@ -37,7 +39,20 @@ export const LeaderboardPage: FunctionComponent = () => {
       backdrop.draw(ctx);
     }
 
-    loop();
+    client
+      .from("leaderboard")
+      .select()
+      .order("charge", { ascending: false })
+      .limit(5)
+      .then(({ data, error }) => {
+        if (error) {
+          window.location.href = "/500";
+          return;
+        }
+        setLeaderboardData(data);
+        loop();
+      });
+
   }, []);
 
   return (
@@ -45,9 +60,13 @@ export const LeaderboardPage: FunctionComponent = () => {
       <div className="leaderboard-page">
         <div className="leaderboard-page__menu">
           <h3 className="leaderboard-page__menu-title">Leaderboard</h3>
-          <div className="leaderboard-page__menu-item">
-            <span>1. 1255</span>
-          </div>
+          { 
+            leaderboardData.map((listing, index) => (
+              <div key={index} className="leaderboard-page__menu-item">
+                <span>{index + 1}: {listing.team_number} - {listing.charge}</span>
+              </div>
+            ))
+          }
         </div>
         <Link
           to="/game"
