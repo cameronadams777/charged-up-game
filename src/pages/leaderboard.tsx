@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Backdrop } from "../game/backdrop";
 import { client } from "../lib/supabase";
@@ -6,8 +6,11 @@ import "./leaderboard.scss";
 
 export const LeaderboardPage: FunctionComponent = () => {
   const [leaderboardData, setLeaderboardData] = useState<any>([]);
+  const effectCalled = useRef(false);
 
   useEffect(() => {
+    if(effectCalled.current) return;
+    effectCalled.current = true;
     const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
     if (canvas == null) {
       console.error("Game Error: Canvas not defined");
@@ -38,21 +41,47 @@ export const LeaderboardPage: FunctionComponent = () => {
       backdrop.update(secondsPassed);
       backdrop.draw(ctx);
     }
+   
+    const teamNumber = localStorage.getItem("team_number");
+    const sessionId = localStorage.getItem("session_id");
+    const charge = localStorage.getItem("charge");
+    
+    const submitCharge = async () => {
+      await client
+        .from("leaderboard")
+        .insert({ 
+          team_number: teamNumber, 
+          session_id: sessionId,
+          charge,
+        });
 
-    client
-      .from("leaderboard")
-      .select()
-      .order("charge", { ascending: false })
-      .limit(5)
-      .then(({ data, error }) => {
-        if (error) {
-          window.location.href = "/500";
-          return;
-        }
-        setLeaderboardData(data);
-        loop();
-      });
+      localStorage.removeItem("charge");
+    }
 
+    const fetchLeaderboardData = async () => {
+      const { data, error } = await client
+        .from("leaderboard")
+        .select()
+        .order("charge", { ascending: false })
+        .limit(5)
+      if (error) {
+        window.location.href = "/500";
+        return;
+      }
+      setLeaderboardData(data);
+    }
+
+    loop();
+
+    if (charge?.length) {
+      submitCharge()
+        .then(async () => {
+          await fetchLeaderboardData()
+        });
+      return;
+    }
+
+    fetchLeaderboardData();
   }, []);
 
   return (

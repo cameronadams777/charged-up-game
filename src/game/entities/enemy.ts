@@ -1,6 +1,11 @@
 import { Vector2 } from "../math/vector2"
 import { BaseEntity } from "./base-entity";
 import { Player } from "./player";
+import enemyImageSrc from "../../assets/enemy.png";
+import { SPRITE_SIZE_DIMENSION } from "../constants";
+
+const enemyImage = new Image();
+enemyImage.src = enemyImageSrc;
 
 export class Enemy extends BaseEntity {
   constructor(position: Vector2) {
@@ -27,12 +32,12 @@ export class Enemy extends BaseEntity {
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.strokeStyle = 'red';
-    ctx.strokeRect(
-      this.position.getX(), 
-      this.position.getY(), 
-      this.width, 
-      this.height 
-    );
+    ctx.drawImage(
+      enemyImage,
+      this.position.getX(),
+      this.position.getY(),
+      SPRITE_SIZE_DIMENSION,
+      SPRITE_SIZE_DIMENSION,
+    )
   }
 }

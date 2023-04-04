@@ -1,6 +1,7 @@
 import * as luxon from 'luxon';
 import { PLAYER_START_POSITION, SPRITE_SIZE_DIMENSION } from "./constants";
 import { Cone } from "./entities/cone";
+import { ChargingStation } from './entities/charging-station';
 import { Cube } from "./entities/cube";
 import { Enemy } from "./entities/enemy";
 import { GameObject } from "./entities/game-object";
@@ -8,10 +9,13 @@ import { Player } from "./entities/player";
 import { Vector2 } from "./math/vector2";
 import { randomIntFromInterval } from "./utils";
 import heartImageSrc from '../assets/heart.png';
-import { ChargingStation } from './entities/charging-station';
+import chargeImageSrc from "../assets/charge-bolt.png";
 
 const heartImage = new Image();
 heartImage.src = heartImageSrc;
+
+const chargeImage = new Image();
+chargeImage.src = chargeImageSrc;
 
 export class Game {
   viewport: HTMLCanvasElement
@@ -40,7 +44,9 @@ export class Game {
     this.gameTimer = this.endTime.getTime() - now.getTime();
 
     if (this.player.getLives() <= 0 || this.gameTimer <= 500) {
-      return; 
+      localStorage.setItem("charge", this.charge.toString());
+      window.location.href = "/leaderboard";
+      return;
     }
 
     this.handleKeyEvents();
@@ -95,9 +101,16 @@ export class Game {
 
     ctx.fillStyle = 'white';
     const chargeMeasurements = ctx.measureText(this.charge.toString());
+    ctx.drawImage(
+      chargeImage,
+      (this.viewport.width / 2) - 175,
+      5,
+      SPRITE_SIZE_DIMENSION * 2,
+      SPRITE_SIZE_DIMENSION * 2
+    );
     ctx.fillText(
       this.charge.toString(), 
-      (this.viewport.width / 2) - 150, 
+      (this.viewport.width / 2) - 135, 
       this.viewport.height / 8 - ((chargeMeasurements.actualBoundingBoxAscent + chargeMeasurements.actualBoundingBoxDescent) / 2)
     );
 

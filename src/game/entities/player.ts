@@ -1,5 +1,10 @@
 import { Vector2 } from "../math/vector2";
 import { BaseEntity } from "./base-entity";
+import { SPRITE_SIZE_DIMENSION } from "../constants";
+import playerImageSrc from "../../assets/player.png";
+
+const playerImage = new Image();
+playerImage.src = playerImageSrc;
 
 export class Player extends BaseEntity {
   lives: number;
@@ -17,8 +22,13 @@ export class Player extends BaseEntity {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = 'blue';
-    super.draw(ctx);
+    ctx.drawImage(
+      playerImage, 
+      this.position.getX(), 
+      this.position.getY(), 
+      SPRITE_SIZE_DIMENSION, 
+      SPRITE_SIZE_DIMENSION
+    );
   }
 
   getLives(): number {
