@@ -8,14 +8,18 @@ import { GameObject } from "./entities/game-object";
 import { Player } from "./entities/player";
 import { Vector2 } from "./math/vector2";
 import { randomIntFromInterval } from "./utils";
-import heartImageSrc from '../assets/heart.png';
+import heartImageSrc from "../assets/heart.png";
 import chargeImageSrc from "../assets/charge-bolt.png";
+import floorImageSrc from "../assets/floor.png";
 
 const heartImage = new Image();
 heartImage.src = heartImageSrc;
 
 const chargeImage = new Image();
 chargeImage.src = chargeImageSrc;
+
+const floorImage = new Image();
+floorImage.src = floorImageSrc;
 
 export class Game {
   viewport: HTMLCanvasElement
@@ -75,9 +79,20 @@ export class Game {
 
   draw(ctx: CanvasRenderingContext2D): void {
     // Give canvas a background
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, this.viewport.width, this.viewport.height);
- 
+    ctx.drawImage(
+      floorImage,
+      0,
+      0,
+      this.viewport.width,
+      this.viewport.height,
+    );
+
+    ctx.fillStyle = "#0066B3"; 
+    ctx.fillRect(this.viewport.width * 0.1, 0, 2, this.viewport.height);
+
+    ctx.fillStyle = "#ED1C24"; 
+    ctx.fillRect(this.viewport.width * 0.9, 0, 2, this.viewport.height);
+    
     this.player.draw(ctx);
 
     this.gameObjects.forEach(gameObject => gameObject.draw(ctx));

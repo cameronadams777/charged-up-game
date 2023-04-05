@@ -9,6 +9,10 @@ export class BaseEntity {
   velocity: Vector2;
   width: number;
   height: number;
+  totalFrames: number;
+  currentFrame: number;
+  srcX: number;
+  framesDrawn: number;
 
   constructor(position: Vector2) {
     this.type = "base";
@@ -16,15 +20,17 @@ export class BaseEntity {
     this.width = SPRITE_SIZE_DIMENSION;
     this.height = SPRITE_SIZE_DIMENSION;
     this.velocity = Vector2.Zero();
+    this.totalFrames = 0;
+    this.framesDrawn = 0;
+    this.srcX = 0;
+    this.currentFrame = 0;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.fillRect(
-      this.position.getX(), 
-      this.position.getY(), 
-      this.width, 
-      this.height 
-    );
+    this.currentFrame = this.currentFrame % this.totalFrames;
+    this.srcX = this.currentFrame * SPRITE_SIZE_DIMENSION;
+    this.framesDrawn += 1;
+    if (this.framesDrawn % 10 === 0) this.currentFrame += 1;
   }
 
   isColliding(entity: BaseEntity): boolean {

@@ -15,8 +15,8 @@ export class Player extends BaseEntity {
   }
 
   update(viewport: HTMLCanvasElement, delta: number): void {
-    if ((this.getLeft() > 0 || this.velocity.getX() > 0) &&
-        (this.getRight() < viewport.width || this.velocity.getX() < 0)) {
+    if ((this.getLeft() > viewport.width * 0.1 || this.velocity.getX() > 0) &&
+        (this.getRight() < viewport.width * 0.9 || this.velocity.getX() < 0)) {
       this.position.setX(this.position.getX() + (this.velocity.getX() * delta)); 
     }
   }

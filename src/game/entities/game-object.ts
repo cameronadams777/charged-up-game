@@ -15,11 +15,6 @@ export class GameObject extends BaseEntity {
     this.position.setY(this.position.getY() + (this.velocity.getY() * delta));
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = 'yellow';
-    super.draw(ctx);
-  }
-
   getPointValue(): number {
     return this.pointValue;
   }
