@@ -5,6 +5,8 @@ import coneImageSrc from "../../assets/cone-sheet.png";
 
 const coneImage = new Image();
 coneImage.src = coneImageSrc;
+coneImage.width = SPRITE_SIZE_DIMENSION;
+coneImage.height = SPRITE_SIZE_DIMENSION;
 
 export class Cone extends GameObject {
   constructor(position: Vector2) {

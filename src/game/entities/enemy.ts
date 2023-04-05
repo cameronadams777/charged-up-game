@@ -38,6 +38,6 @@ export class Enemy extends BaseEntity {
       this.position.getY(),
       SPRITE_SIZE_DIMENSION,
       SPRITE_SIZE_DIMENSION,
-    )
+    );
   }
 }

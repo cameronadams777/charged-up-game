@@ -26,6 +26,8 @@ export const MainMenuPage: FunctionComponent = () => {
       return;
     }
 
+    ctx.imageSmoothingEnabled = false;
+
     let secondsPassed = 0;
     let oldTimestamp = 0;
     const backdrop = new Backdrop(canvas);

@@ -1,6 +1,5 @@
 import { FunctionComponent, useEffect, useRef } from "react";
 import { Game } from "../game";
-import gameSound from "../assets/audio/game-music.mp3";
 
 export const GamePage: FunctionComponent = () => {
   const effectCalled = useRef(false);
@@ -24,6 +23,7 @@ export const GamePage: FunctionComponent = () => {
 
       // Customize canvas context 
       ctx.font = '40px VT323';
+      ctx.imageSmoothingEnabled = false;
 
       let secondsPassed = 0;
       let oldTimestamp = 0;

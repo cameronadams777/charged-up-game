@@ -11,6 +11,7 @@ export const LeaderboardPage: FunctionComponent = () => {
   useEffect(() => {
     if(effectCalled.current) return;
     effectCalled.current = true;
+
     const canvas = document.querySelector<HTMLCanvasElement>("#game-canvas");
     if (canvas == null) {
       console.error("Game Error: Canvas not defined");
@@ -26,6 +27,8 @@ export const LeaderboardPage: FunctionComponent = () => {
       return;
     }
     
+    ctx.imageSmoothingEnabled = false;
+
     let secondsPassed = 0;
     let oldTimestamp = 0;
     const backdrop = new Backdrop(canvas);
@@ -90,7 +93,7 @@ export const LeaderboardPage: FunctionComponent = () => {
         <div className="leaderboard-page__menu">
           <h3 className="leaderboard-page__menu-title">Leaderboard</h3>
           { 
-            leaderboardData.map((listing, index) => (
+            leaderboardData.map((listing: any, index: number) => (
               <div key={index} className="leaderboard-page__menu-item">
                 <span>{index + 1}: {listing.team_number} - {listing.charge}</span>
               </div>

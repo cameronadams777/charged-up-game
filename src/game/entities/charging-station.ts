@@ -1,6 +1,10 @@
 import { SPRITE_SIZE_DIMENSION } from "../constants";
 import { Vector2 } from "../math/vector2";
 import { GameObject } from "./game-object";
+import chargingStationSrc from "../../assets/charging-station.png";
+
+const chargingStationImage = new Image();
+chargingStationImage.src = chargingStationSrc;
 
 export class ChargingStation extends GameObject {
   constructor(position: Vector2) {
@@ -11,12 +15,12 @@ export class ChargingStation extends GameObject {
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
-    ctx.fillStyle = 'gold';
-    ctx.fillRect(
-      this.position.getX(), 
-      this.position.getY(), 
-      SPRITE_SIZE_DIMENSION * 4, 
-      SPRITE_SIZE_DIMENSION * 2
+    ctx.drawImage(
+      chargingStationImage,
+      this.position.getX(),
+      this.position.getY(),
+      this.width,
+      this.height,
     );
   }
 
