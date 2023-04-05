@@ -1,6 +1,7 @@
 import { FunctionComponent, useState } from "react";
 import ReactModal from "react-modal";
 import { v4 as uuid } from "uuid";
+import "./team-number-modal.scss";
 
 interface TeamNumberProps {
   isOpen: boolean;
@@ -23,10 +24,11 @@ export const TeamNumberModal: FunctionComponent<TeamNumberProps> = (props) => {
 
   return (
     <ReactModal
+      className="team-number-modal"
       overlayClassName="modal-overlay"
       {...rest}
     >
-      <div className="team-number-modal">
+      <div className="team-number-modal__content-container">
         <button 
           className="team-number-modal__close-button"
           onClick={props.close}
@@ -38,11 +40,11 @@ export const TeamNumberModal: FunctionComponent<TeamNumberProps> = (props) => {
           aria-label="team number" 
           type="number"
           value={teamNumber} 
-          className="team-number__team-input"
+          className="team-number-modal__team-input"
           onInput={(event) => setTeamNumber(parseInt((event.target as HTMLInputElement).value, 10))} 
         />
         <button 
-          className="team-number__submit-button"
+          className="team-number-modal__submit-button"
           onClick={saveTeamNumberAndSession}
         >
           Submit
