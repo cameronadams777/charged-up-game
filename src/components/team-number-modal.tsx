@@ -12,15 +12,15 @@ interface TeamNumberProps {
 export const TeamNumberModal: FunctionComponent<TeamNumberProps> = (props) => {
   const [teamNumber, setTeamNumber] = useState<number>(0);
   const { onComplete, ...rest } = props;
-  
+
   const saveTeamNumberAndSession = () => {
     const teamNumString = teamNumber.toString();
-    if(teamNumString.length > 4) return;
+    if (teamNumString.length <= 1 || teamNumString.length > 4) return;
     const sessionId = uuid();
     localStorage.setItem("team_number", teamNumString);
     localStorage.setItem("session_id", sessionId);
     onComplete();
-  }
+  };
 
   return (
     <ReactModal
@@ -29,21 +29,25 @@ export const TeamNumberModal: FunctionComponent<TeamNumberProps> = (props) => {
       {...rest}
     >
       <div className="team-number-modal__content-container">
-        <button 
+        <button
           className="team-number-modal__close-button"
           onClick={props.close}
         >
           X
         </button>
-        <input 
-          id="team-number" 
-          aria-label="team number" 
+        <input
+          id="team-number"
+          aria-label="team number"
           type="number"
-          value={teamNumber} 
+          value={teamNumber}
           className="team-number-modal__team-input"
-          onInput={(event) => setTeamNumber(parseInt((event.target as HTMLInputElement).value, 10))} 
+          onInput={(event) =>
+            setTeamNumber(
+              parseInt((event.target as HTMLInputElement).value, 10)
+            )
+          }
         />
-        <button 
+        <button
           className="team-number-modal__submit-button"
           onClick={saveTeamNumberAndSession}
         >
@@ -52,4 +56,4 @@ export const TeamNumberModal: FunctionComponent<TeamNumberProps> = (props) => {
       </div>
     </ReactModal>
   );
-}
+};
